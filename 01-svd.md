@@ -11,7 +11,7 @@ $$
 其中：
 
 - $U \in \mathbb{R}^{m \times m}$ 是**正交矩阵**（$U^{T}U = I$），其列向量 $u_1,\dots,u_m$ 称为 $A$ 的**左奇异向量**，是 $AA^{T}$ 的单位特征向量；
-- $\Sigma \in \mathbb{R}^{m \times n}$ 是**对角矩阵**，对角元素 $\sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0$ 称为**奇异值**，$r = \operatorname{rank}(A)$，其余位置全为 0；奇异值是 $A^{T}A$（同时也是 $AA^{T}$）特征值的算术平方根；
+- $\Sigma \in \mathbb{R}^{m \times n}$ 是**对角矩阵**，对角元素 $\sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0$ 称为**奇异值**，$r = \mathrm{rank}(A)$，其余位置全为 0；奇异值是 $A^{T}A$（同时也是 $AA^{T}$）特征值的算术平方根；
 - $V \in \mathbb{R}^{n \times n}$ 是**正交矩阵**，其列向量 $v_1,\dots,v_n$ 称为**右奇异向量**，是 $A^{T}A$ 的单位特征向量。
 
 > **几何意义**：SVD 告诉我们，任意线性变换 $x \mapsto Ax$ 都可以分解为三步——先在输入空间旋转/反射（$V^T$），再沿各坐标轴缩放 $\sigma_i$（$\Sigma$，会把 $n$ 维空间"压扁"到 $r$ 维），最后在输出空间旋转/反射（$U$）。这把一个"任意扭曲"的变换拆解成了刚体运动 + 拉伸。
@@ -20,13 +20,13 @@ $$
 
 为什么这样的分解一定存在？核心思路如下：
 
-1. $A^{T}A$ 是**半正定对称矩阵**，故可正交对角化：存在正交阵 $V$ 使
-   $$V^{T}(A^{T}A)V = \operatorname{diag}(\lambda_1,\dots,\lambda_n),\quad \lambda_1\ge\cdots\ge\lambda_r>0=\lambda_{r+1}=\cdots$$
-2. 取 $\sigma_i = \sqrt{\lambda_i}$，记 $V = [v_1,\dots,v_n]$。对 $i \le r$，定义
-   $$u_i = \frac{1}{\sigma_i}Av_i$$
-3. 验证 $\{u_1,\dots,u_r\}$ 是标准正交的：
-   $$u_i^{T}u_j = \frac{v_i^{T}A^{T}Av_j}{\sigma_i\sigma_j} = \frac{\lambda_j}{\sigma_i\sigma_j}v_i^{T}v_j = \delta_{ij}$$
-4. 将其扩充为 $\mathbb{R}^m$ 的标准正交基，得到正交阵 $U$，并直接验证 $Av_i = \sigma_i u_i$ 对所有 $i$ 成立（$i>r$ 时两边都是 0），于是 $AV = U\Sigma$，即 $A = U\Sigma V^{T}$。$\blacksquare$
+1. $A^{T}A$ 是**半正定对称矩阵**，故可正交对角化：存在正交阵 $V$ 使  
+   $V^{T}(A^{T}A)V = \mathrm{diag}(\lambda_1,\dots,\lambda_n),\quad \lambda_1\ge\cdots\ge\lambda_r>0=\lambda_{r+1}=\cdots$
+2. 取 $\sigma_i = \sqrt{\lambda_i}$，记 $V = [v_1,\dots,v_n]$。对 $i \le r$，定义  
+   $u_i = \frac{1}{\sigma_i}Av_i$
+3. 验证 $\{u_1,\dots,u_r\}$ 是标准正交的：  
+   $u_i^{T}u_j = \frac{v_i^{T}A^{T}Av_j}{\sigma_i\sigma_j} = \frac{\lambda_j}{\sigma_i\sigma_j}v_i^{T}v_j = \delta_{ij}$
+4. 将其扩充为 $\mathbb{R}^m$ 的标准正交基，得到正交阵 $U$，并直接验证 $Av_i = \sigma_i u_i$ 对所有 $i$ 成立（$i>r$ 时两边都是 0），于是 $AV = U\Sigma$，即 $A = U\Sigma V^{T}$。∎
 
 ## 3. 手动求 SVD 的标准流程
 
@@ -66,7 +66,7 @@ $$
 \det(A^{T}A - \lambda I) = \begin{vmatrix} 2-\lambda & 1 \\ 1 & 2-\lambda \end{vmatrix} = (2-\lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = 0
 $$
 
-解得 $\lambda_1 = 3,\ \lambda_2 = 1$（均大于 0，故 $\operatorname{rank}(A)=2$）。奇异值：
+解得 $\lambda_1 = 3,\ \lambda_2 = 1$（均大于 0，故 $\mathrm{rank}(A)=2$）。奇异值：
 
 $$
 \sigma_1 = \sqrt{3}, \qquad \sigma_2 = 1
@@ -80,10 +80,10 @@ $$
 
 ### Step 3：求右奇异向量 $V$
 
-- 对 $\lambda_1 = 3$：$(A^{T}A - 3I)x = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}x = 0 \Rightarrow x_1 = x_2$，单位化得
-  $$v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
-- 对 $\lambda_2 = 1$：$(A^{T}A - I)x = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}x = 0 \Rightarrow x_1 = -x_2$，单位化得
-  $$v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+- 对 $\lambda_1 = 3$：$(A^{T}A - 3I)x = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}x = 0 \Rightarrow x_1 = x_2$，单位化得  
+  $v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$
+- 对 $\lambda_2 = 1$：$(A^{T}A - I)x = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}x = 0 \Rightarrow x_1 = -x_2$，单位化得  
+  $v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$
 
 （可验证 $v_1 \perp v_2$，$V$ 为正交阵。）
 
@@ -167,13 +167,13 @@ $$
 
 **应用举例**：
 
-| 应用 | 原理 |
-|---|---|
-| 图像压缩 / PCA | 保留前 $k$ 个大奇异值，丢弃小奇异值对应的噪声分量 |
-| 数据降维 | 用 $V$ 的前 $k$ 列做投影（等价于 PCA） |
-| 伪逆与最小二乘 | $A^{+} = V\Sigma^{+}U^{T}$，病态/欠定方程组的稳定求解 |
-| 推荐系统 | 矩阵补全（如 Funk-SVD）把评分矩阵分解为用户/物品隐向量 |
-| 语义分析 | LSA 对词-文档矩阵做截断 SVD 提取主题 |
+| 应用         | 原理                                       |
+| ---------- | ---------------------------------------- |
+| 图像压缩 / PCA | 保留前 $k$ 个大奇异值，丢弃小奇异值对应的噪声分量              |
+| 数据降维       | 用 $V$ 的前 $k$ 列做投影（等价于 PCA）               |
+| 伪逆与最小二乘    | $A^{+} = V\Sigma^{+}U^{T}$，病态/欠定方程组的稳定求解 |
+| 推荐系统       | 矩阵补全（如 Funk-SVD）把评分矩阵分解为用户/物品隐向量         |
+| 语义分析       | LSA 对词-文档矩阵做截断 SVD 提取主题                  |
 
 ## 6. 小结
 
