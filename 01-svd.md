@@ -20,12 +20,12 @@ $$
 
 为什么这样的分解一定存在？核心思路如下：
 
-1. $A^{T}A$ 是**半正定对称矩阵**，故可正交对角化：存在正交阵 $V$ 使
-   $$V^{T}(A^{T}A)V = \mathrm{diag}(\lambda_1,\dots,\lambda_n),\quad \lambda_1\ge\cdots\ge\lambda_r>0=\lambda_{r+1}=\cdots$$
-2. 取 $\sigma_i = \sqrt{\lambda_i}$，记 $V = [v_1,\dots,v_n]$。对 $i \le r$，定义
-   $$u_i = \frac{1}{\sigma_i}Av_i$$
-3. 验证 $\{u_1,\dots,u_r\}$ 是标准正交的：
-   $$u_i^{T}u_j = \frac{v_i^{T}A^{T}Av_j}{\sigma_i\sigma_j} = \frac{\lambda_j}{\sigma_i\sigma_j}v_i^{T}v_j = \delta_{ij}$$
+1. $A^{T}A$ 是**半正定对称矩阵**，故可正交对角化：存在正交阵 $V$ 使  
+   $V^{T}(A^{T}A)V = \mathrm{diag}(\lambda_1,\dots,\lambda_n),\quad \lambda_1\ge\cdots\ge\lambda_r>0=\lambda_{r+1}=\cdots$
+2. 取 $\sigma_i = \sqrt{\lambda_i}$，记 $V = [v_1,\dots,v_n]$。对 $i \le r$，定义  
+   $u_i = \frac{1}{\sigma_i}Av_i$
+3. 验证 $\{u_1,\dots,u_r\}$ 是标准正交的：  
+   $u_i^{T}u_j = \frac{v_i^{T}A^{T}Av_j}{\sigma_i\sigma_j} = \frac{\lambda_j}{\sigma_i\sigma_j}v_i^{T}v_j = \delta_{ij}$
 4. 将其扩充为 $\mathbb{R}^m$ 的标准正交基，得到正交阵 $U$，并直接验证 $Av_i = \sigma_i u_i$ 对所有 $i$ 成立（$i>r$ 时两边都是 0），于是 $AV = U\Sigma$，即 $A = U\Sigma V^{T}$。∎
 
 ## 3. 手动求 SVD 的标准流程
@@ -80,10 +80,8 @@ $$
 
 ### Step 3：求右奇异向量 $V$
 
-- 对 $\lambda_1 = 3$：$(A^{T}A - 3I)x = \begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix}x = 0 \Rightarrow x_1 = x_2$，单位化得
-  $$v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$$
-- 对 $\lambda_2 = 1$：$(A^{T}A - I)x = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}x = 0 \Rightarrow x_1 = -x_2$，单位化得
-  $$v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+- 对 $\lambda_1 = 3$：解 $(A^{T}A - 3I)x = 0$，即 $-x_1 + x_2 = 0$，得 $x_1 = x_2$，单位化得 $v_1 = \dfrac{1}{\sqrt{2}}(1,\ 1)^{T}$
+- 对 $\lambda_2 = 1$：解 $(A^{T}A - I)x = 0$，即 $x_1 + x_2 = 0$，得 $x_1 = -x_2$，单位化得 $v_2 = \dfrac{1}{\sqrt{2}}(1,\ -1)^{T}$
 
 （可验证 $v_1 \perp v_2$，$V$ 为正交阵。）
 
@@ -127,7 +125,7 @@ $$
 U\Sigma V^{T}\text{ 的第1列} = \frac{\sqrt{3}}{\sqrt{2}}u_1 + \frac{1}{\sqrt{2}}u_2 = \frac{\sqrt{3}}{\sqrt{2}}\cdot\frac{1}{\sqrt{6}}\begin{bmatrix}1\\1\\2\end{bmatrix} + \frac{1}{\sqrt{2}}\cdot\frac{1}{\sqrt{2}}\begin{bmatrix}1\\-1\\0\end{bmatrix} = \frac{1}{2}\begin{bmatrix}1\\1\\2\end{bmatrix} + \frac{1}{2}\begin{bmatrix}1\\-1\\0\end{bmatrix} = \begin{bmatrix}1\\0\\1\end{bmatrix} \checkmark
 $$
 
-第 2 列同理可得 $\begin{bmatrix}0\\1\\1\end{bmatrix}$，正是 $A$ 的第 2 列。验证通过。
+第 2 列同理可得 $(0,\ 1,\ 1)^{T}$，正是 $A$ 的第 2 列。验证通过。
 
 > **数值验证**：用 NumPy 的 `numpy.linalg.svd` 计算，奇异值为 $1.732051 = \sqrt{3}$ 和 $1$，与手算完全一致（$U, V$ 的符号可能整体取反，不影响分解）。
 
@@ -167,13 +165,13 @@ $$
 
 **应用举例**：
 
-| 应用 | 原理 |
-|---|---|
-| 图像压缩 / PCA | 保留前 $k$ 个大奇异值，丢弃小奇异值对应的噪声分量 |
-| 数据降维 | 用 $V$ 的前 $k$ 列做投影（等价于 PCA） |
-| 伪逆与最小二乘 | $A^{+} = V\Sigma^{+}U^{T}$，病态/欠定方程组的稳定求解 |
-| 推荐系统 | 矩阵补全（如 Funk-SVD）把评分矩阵分解为用户/物品隐向量 |
-| 语义分析 | LSA 对词-文档矩阵做截断 SVD 提取主题 |
+| 应用         | 原理                                       |
+| ---------- | ---------------------------------------- |
+| 图像压缩 / PCA | 保留前 $k$ 个大奇异值，丢弃小奇异值对应的噪声分量              |
+| 数据降维       | 用 $V$ 的前 $k$ 列做投影（等价于 PCA）               |
+| 伪逆与最小二乘    | $A^{+} = V\Sigma^{+}U^{T}$，病态/欠定方程组的稳定求解 |
+| 推荐系统       | 矩阵补全（如 Funk-SVD）把评分矩阵分解为用户/物品隐向量         |
+| 语义分析       | LSA 对词-文档矩阵做截断 SVD 提取主题                  |
 
 ## 6. 小结
 
